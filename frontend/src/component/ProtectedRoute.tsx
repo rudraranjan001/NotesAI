@@ -9,7 +9,7 @@ function ProtectedRoute({ children } : ProtectedRouteProps){
     const { user, loading } = useAuth();
 
     if(!loading){
-        <p>Loading...</p>
+        <p>Checking your Session...</p>
     }
     if(!user){
         return <Navigate to="/login" replace/>
