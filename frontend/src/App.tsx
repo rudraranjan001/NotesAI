@@ -5,7 +5,7 @@ import NotesPage from "./pages/NotesPage"
 import LoginPage from "./pages/LoginPage"
 import NoteDetailPage from "./pages/NoteDetailPage"
 import Navbar from "./component/Navbar"
-
+import ProtectedRoute from "./component/ProtectedRoute"
 
 function App() {
   
@@ -15,9 +15,9 @@ function App() {
       <Navbar />
        <Routes>
           <Route path = "/" element = {<HomePage />} />
-          <Route path = "/Dashboard" element = {<DashboardPage />} />
-          <Route path = "/notes" element = {<NotesPage />} />
-          <Route path = "/notes/:id" element = {<NoteDetailPage />} />
+          <Route path = "/Dashboard" element = {<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
+          <Route path = "/notes" element = {<ProtectedRoute><NotesPage /></ProtectedRoute>} />
+          <Route path = "/notes/:id" element = {<ProtectedRoute><NoteDetailPage /></ProtectedRoute>} />
           <Route path = "/Login" element = {<LoginPage />} />
        </Routes>
     </BrowserRouter>
