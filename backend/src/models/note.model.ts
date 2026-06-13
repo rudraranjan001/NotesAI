@@ -1,14 +1,19 @@
 import mongoose from "mongoose";
 
 interface INote {
+    userId:string,
     title:string, //ye dono hi required text hai
-    course:string,
+    content:string,
     subject?:string, //subject?: -> iska mtlb hai optional text
     tags:string[]; // tags: -> ye toh samajh hi gye hoge array of strings   
 }
 
 const notesSchema = new mongoose.Schema(
     {
+        userId:{
+            type:String,
+            required:true,
+        },
         title:{
             type:String,
             required:true,

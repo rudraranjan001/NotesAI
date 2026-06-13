@@ -1,9 +1,10 @@
 import { Router } from "express";
 import Note from "../models/note.model";
+import { authMiddleware } from "../middleware/authMiddleware";
 
 const router = Router();
 
-router.get("/",async(_req,res) => { //it list all notes
+router.get("/",authMiddleware,async(_req,res) => { //it list all notes
     try{
         const notes = await Note.find(); //ye kya karega? ye mongodb mein jaega aur saare notes ko find karega notes collection mein
         res.json(notes);
@@ -15,7 +16,7 @@ router.get("/",async(_req,res) => { //it list all notes
     }
 });
 
-router.post("/", async (req,res) => { // it creates a note
+router.post("/",authMiddleware, async (req,res) => { // it creates a note
     try{
         const { title , content , subject , tags } = req.body;
 
@@ -38,7 +39,7 @@ router.post("/", async (req,res) => { // it creates a note
     }
 });
 
-router.get("/:id",async(req,res) => { //it get one specific notes
+router.get("/:id",authMiddleware,async(req,res) => { //it get one specific notes
     try{
         const note = await Note.findById(req.params.id);//req.param.id it means express read the id  from the url
 
@@ -57,7 +58,7 @@ router.get("/:id",async(req,res) => { //it get one specific notes
     }
 });
 
-router.delete("/:id",async (req,res) => {
+router.delete("/:id",authMiddleware,async (req,res) => {
     try{
         const deletedNote = await Note.findByIdAndDelete(req.params.id);//this line delete one note  from mongodb using the id from the url
 
@@ -77,7 +78,7 @@ router.delete("/:id",async (req,res) => {
     }
 });
 
-router.put("/:id",async(req,res) => {
+router.put("/:id",authMiddleware,async(req,res) => {
     try{
         const updatedNote = await Note.findByIdAndUpdate(
             req.params.id,
