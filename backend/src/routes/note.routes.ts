@@ -4,9 +4,9 @@ import { authMiddleware } from "../middleware/authMiddleware";
 
 const router = Router();
 
-router.get("/",authMiddleware,async(_req,res) => { //it list all notes
+router.get("/",authMiddleware,async(req,res) => { //it list all notes
     try{
-        const notes = await Note.find(); //ye kya karega? ye mongodb mein jaega aur saare notes ko find karega notes collection mein
+        const notes = await Note.find({ userId: (req as any).uid }); //ye kya karega? ye mongodb mein jaega aur saare notes ko find karega notes collection mein
         res.json(notes);
     }
     catch(error){
@@ -21,6 +21,7 @@ router.post("/",authMiddleware, async (req,res) => { // it creates a note
         const { title , content , subject , tags } = req.body;
 
         const note = new Note({
+            userId: (req as any).uid,
             title,
             content,
             subject,
@@ -41,7 +42,10 @@ router.post("/",authMiddleware, async (req,res) => { // it creates a note
 
 router.get("/:id",authMiddleware,async(req,res) => { //it get one specific notes
     try{
-        const note = await Note.findById(req.params.id);//req.param.id it means express read the id  from the url
+        const note = await Note.findOne({
+            _id: req.params.id,
+            userId: (req as any).uid,
+            });//req.param.id it means express read the id  from the url
 
         if(!note){
             return res.status(404).json({
@@ -60,7 +64,10 @@ router.get("/:id",authMiddleware,async(req,res) => { //it get one specific notes
 
 router.delete("/:id",authMiddleware,async (req,res) => {
     try{
-        const deletedNote = await Note.findByIdAndDelete(req.params.id);//this line delete one note  from mongodb using the id from the url
+        const deletedNote = await Note.findOneAndDelete({
+        _id: req.params.id,
+        userId: (req as any).uid,
+        });//this line delete one note  from mongodb using the id from the url
 
         if(!deletedNote){
             return res.status(404).json({
@@ -80,10 +87,13 @@ router.delete("/:id",authMiddleware,async (req,res) => {
 
 router.put("/:id",authMiddleware,async(req,res) => {
     try{
-        const updatedNote = await Note.findByIdAndUpdate(
-            req.params.id,
+        const updatedNote = await Note.findOneAndUpdate(
+            {
+                _id: req.params.id,
+                userId: (req as any).uid,
+            },
             req.body,
-            {new : true,runValidators: true}
+            { new: true, runValidators: true }
         );
 
         if(!updatedNote){

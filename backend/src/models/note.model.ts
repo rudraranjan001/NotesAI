@@ -1,10 +1,10 @@
 import mongoose from "mongoose";
 
 interface INote {
-    userId:string,
-    title:string, //ye dono hi required text hai
-    content:string,
-    subject?:string, //subject?: -> iska mtlb hai optional text
+    userId:string;
+    title:string; //ye dono hi required text hai
+    content:string;
+    subject?:string; //subject?: -> iska mtlb hai optional text
     tags:string[]; // tags: -> ye toh samajh hi gye hoge array of strings   
 }
 
