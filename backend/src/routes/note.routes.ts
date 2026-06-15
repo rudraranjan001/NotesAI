@@ -87,12 +87,18 @@ router.delete("/:id",authMiddleware,async (req,res) => {
 
 router.put("/:id",authMiddleware,async(req,res) => {
     try{
+        const { title, content, subject, tags } = req.body;
         const updatedNote = await Note.findOneAndUpdate(
             {
                 _id: req.params.id,
                 userId: (req as any).uid,
             },
-            req.body,
+            {
+                title,
+                content,
+                subject,
+                tags,
+            },
             { new: true, runValidators: true }
         );
 
