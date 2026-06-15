@@ -11,3 +11,6 @@ build
 
 # logs
 npm-debug.log*
+
+# firebase admin secret
+backend/src/config/serviceAccountKey.json
