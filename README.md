@@ -38,3 +38,32 @@ Backend routes:
 - `GET /api/notes/:id`
 - `PUT /api/notes/:id`
 - `DELETE /api/notes/:id`
+
+## Environment Variables
+
+Backend:
+
+```env
+PORT=
+MONGODB_URI=
+```
+
+Frontend:
+
+```env
+VITE_API_URL=
+VITE_FIREBASE_API_KEY=
+VITE_FIREBASE_AUTH_DOMAIN=
+VITE_FIREBASE_PROJECT_ID=
+VITE_FIREBASE_STORAGE_BUCKET=
+VITE_FIREBASE_MESSAGING_SENDER_ID=
+VITE_FIREBASE_APP_ID=
+```
+
+Firebase Admin:
+
+```txt
+backend/src/config/serviceAccountKey.json
+```
+
+This file is required locally but is ignored by Git for security.
