@@ -67,3 +67,59 @@ backend/src/config/serviceAccountKey.json
 ```
 
 This file is required locally but is ignored by Git for security.
+
+
+## Run Locally
+
+Install backend dependencies:
+
+```bash
+cd backend
+npm install
+```
+
+Start backend:
+
+```bash
+npm run dev
+```
+
+Install frontend dependencies:
+
+```bash
+cd frontend
+npm install
+```
+
+Start frontend:
+
+```bash
+npm run dev
+```
+
+## CI
+
+This project uses GitHub Actions.
+
+The CI workflow runs on:
+
+- push
+- pull request
+
+It checks:
+
+- backend install
+- backend TypeScript build
+- frontend install
+- frontend production build
+
+## Roadmap
+
+- Improve note search and filtering
+- Add better note editor UI
+- Add AI note summarization
+- Add RAG question-answering over notes
+- Add charts with Recharts
+- Add visual note connections with React Flow
+- Add deployment
+- Add Docker later
