@@ -22,7 +22,7 @@ jobs:
         working-directory: backend
         run: npm install
 
-       - name: Create dummy Firebase service account for build
+      - name: Create dummy Firebase service account for build
         working-directory: backend
         run: |
           mkdir -p src/config
