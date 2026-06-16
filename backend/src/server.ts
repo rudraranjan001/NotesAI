@@ -4,6 +4,8 @@ import healthRoutes from './routes/health.routes';
 import connectDB from "./config/db";
 import noteRoutes from "./routes/note.routes";
 import cors from "cors";
+import generateRoutes from "./routes/generate.routes";
+
 
 const app = express();
 
@@ -19,6 +21,7 @@ app.use(cors());//we use cors because it helps us to run frontend and backend on
 //or CORS = permission for frontend and backend to communicate across different origins.
 app.use(express.json());
 
+app.use("/api/generate",generateRoutes);
 app.use("/api/health",healthRoutes);    
 app.use("/api/notes",noteRoutes);
 
