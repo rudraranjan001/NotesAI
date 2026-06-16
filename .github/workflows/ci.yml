@@ -11,7 +11,7 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-       
+
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
@@ -21,6 +21,12 @@ jobs:
       - name: Install backend dependencies
         working-directory: backend
         run: npm install
+
+       - name: Create dummy Firebase service account for build
+        working-directory: backend
+        run: |
+          mkdir -p src/config
+          echo '{"project_id":"dummy","client_email":"dummy@example.com","private_key":"-----BEGIN PRIVATE KEY-----\nMIIB\n-----END PRIVATE KEY-----\n"}' > src/config/serviceAccountKey.json
 
       - name: Build backend
         working-directory: backend
