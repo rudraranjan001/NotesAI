@@ -19,3 +19,22 @@ NotesAI is a full-stack note-taking app with Firebase Google authentication and 
 - Private notes per user
 - Backend route protection with Firebase Admin
 - CI workflow that builds frontend and backend
+
+## Routes
+
+Frontend routes:
+
+- `/`
+- `/login`
+- `/dashboard`
+- `/notes`
+- `/notes/:id`
+
+Backend routes:
+
+- `GET /api/health`
+- `GET /api/notes`
+- `POST /api/notes`
+- `GET /api/notes/:id`
+- `PUT /api/notes/:id`
+- `DELETE /api/notes/:id`
