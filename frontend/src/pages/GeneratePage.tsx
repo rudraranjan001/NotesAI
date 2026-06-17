@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { generateNotes } from "../services/generateApi";
 import { createNote } from "../services/notesApi";
 
@@ -11,6 +11,8 @@ function GeneratePage() {
   const [error , setError] = useState("");
   const [isSaving, setIsSaving] = useState(false);
   const [saveError, setSaveError] = useState("");
+  const [hasSaved, setHasSaved ] = useState(false);
+  const savingRef = useRef(false);
 
   const handleGenerate = async () => {
   if (!topic.trim()) {
@@ -22,6 +24,7 @@ function GeneratePage() {
     setIsGenerating(true);
     setError("");
     setSavedMessage("");
+    setHasSaved(false);
 
     const data = await generateNotes({ topic, format });
     setResult(data);
@@ -33,13 +36,14 @@ function GeneratePage() {
 };
 
   const handleSave = async () => {
-        if(!result) return;
+        if(!result || savingRef.current || hasSaved) return;
        
         try{
+            savingRef.current = true;
             setIsSaving(true);
             setSaveError("");
             setSavedMessage("");
-        
+            
 
             await createNote({
                 title: result.title,
@@ -47,11 +51,13 @@ function GeneratePage() {
                 subject: topic,
                 tags: [format],
             });
+            setHasSaved(true);
 
             setSavedMessage("Saved to your notes.");
         }catch(error){
             setSaveError("failed to save note. Please try again");
         }finally{
+            savingRef.current = false;
             setIsSaving(false);
         }
     }
@@ -85,7 +91,7 @@ function GeneratePage() {
             <p>{result.content}</p>
 
             <button onClick={handleSave} disabled={isSaving}>
-                {isSaving ? "Saving..." : "Save Note"}
+                {isSaving ? "Saving..." : hasSaved ? "Saved" : "Save Note"}
             </button>
 
             {savedMessage && <p>{savedMessage}</p>}

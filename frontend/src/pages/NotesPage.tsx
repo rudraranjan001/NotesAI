@@ -39,7 +39,7 @@ const NotesPage = () => {
 
   return (
     <div>
-        <h1>Saved Notes</h1>
+        <h1>Saved Study Materials</h1>
 
         {notes.length === 0 ? (
         <p>No saved notes yet. Generate notes first, then save them here.</p>
