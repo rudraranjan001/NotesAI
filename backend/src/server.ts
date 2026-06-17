@@ -1,4 +1,6 @@
 import dotenv from "dotenv";
+dotenv.config();
+
 import express from 'express';
 import healthRoutes from './routes/health.routes';
 import connectDB from "./config/db";
@@ -9,7 +11,6 @@ import generateRoutes from "./routes/generate.routes";
 
 const app = express();
 
-dotenv.config();
 
 console.log("Mongo URI exists:", Boolean(process.env.MONGODB_URI)); //it shows that mongo url is working or not
 
