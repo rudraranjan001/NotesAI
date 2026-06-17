@@ -16,18 +16,11 @@ function App() {
       <Navbar />
        <Routes>
           <Route path = "/" element = {<HomePage />} />
-          <Route path = "/Dashboard" element = {<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
+          <Route path = "/dashboard" element = {<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
           <Route path = "/notes" element = {<ProtectedRoute><NotesPage /></ProtectedRoute>} />
           <Route path = "/notes/:id" element = {<ProtectedRoute><NoteDetailPage /></ProtectedRoute>} />
-          <Route path = "/Login" element = {<LoginPage />} />
-          <Route
-            path="/generate"
-            element={
-              <ProtectedRoute>
-                <GeneratePage />
-              </ProtectedRoute>
-            }
-          />
+          <Route path = "/login" element = {<LoginPage />} />
+          <Route path="/generate" element={ <ProtectedRoute> <GeneratePage /></ProtectedRoute> } />
        </Routes>
     </BrowserRouter>
   )

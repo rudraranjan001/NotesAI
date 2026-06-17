@@ -11,6 +11,7 @@ const Navbar = () =>{
                 <>
                     <Link to="/dashboard">Dashboard</Link><br />
                     <Link to="/notes">Notes</Link><br />
+                    <Link to="/generate">Generate</Link><br />
                     <button onClick={logout}>Logout</button>
                 </>
             ):(
