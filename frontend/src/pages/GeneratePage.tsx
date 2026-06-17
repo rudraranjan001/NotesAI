@@ -1,15 +1,60 @@
 import { useState } from "react";
 import { generateNotes } from "../services/generateApi";
+import { createNote } from "../services/notesApi";
 
 function GeneratePage() {
   const [topic, setTopic] = useState("");
   const [format, setFormat] = useState("summary");
   const [result, setResult] = useState<any>(null);
+  const [savedMessage , setSavedMessage] = useState("");
+  const [isGenerating , setIsGenerating] = useState(false);
+  const [error , setError] = useState("");
+  const [isSaving, setIsSaving] = useState(false);
+  const [saveError, setSaveError] = useState("");
 
   const handleGenerate = async () => {
+  if (!topic.trim()) {
+    setError("Please enter a topic.");
+    return;
+  }
+
+  try {
+    setIsGenerating(true);
+    setError("");
+    setSavedMessage("");
+
     const data = await generateNotes({ topic, format });
     setResult(data);
-  };
+  } catch (error) {
+    setError("Failed to generate notes. Please try again.");
+  } finally {
+    setIsGenerating(false);
+  }
+};
+
+  const handleSave = async () => {
+        if(!result) return;
+       
+        try{
+            setIsSaving(true);
+            setSaveError("");
+            setSavedMessage("");
+        
+
+            await createNote({
+                title: result.title,
+                content: result.content,
+                subject: topic,
+                tags: [format],
+            });
+
+            setSavedMessage("Saved to your notes.");
+        }catch(error){
+            setSaveError("failed to save note. Please try again");
+        }finally{
+            setIsSaving(false);
+        }
+    }
 
   return (
     <div>
@@ -29,14 +74,24 @@ function GeneratePage() {
         <option value="comparison chart">Comparison Chart</option>
       </select>
 
-      <button onClick={handleGenerate}>Generate</button>
+      <button onClick={handleGenerate} disabled={isGenerating}>
+        {isGenerating ? "Generating..." : "Generate"}
+        </button>
+        {error && <p>{error}</p>}
 
       {result && (
         <div>
-          <h2>{result.title}</h2>
-          <p>{result.content}</p>
+            <h2>{result.title}</h2>
+            <p>{result.content}</p>
+
+            <button onClick={handleSave} disabled={isSaving}>
+                {isSaving ? "Saving..." : "Save Note"}
+            </button>
+
+            {savedMessage && <p>{savedMessage}</p>}
+            {saveError && <p>{saveError}</p>}
         </div>
-      )}
+        )}
     </div>
   );
 }
