@@ -16,6 +16,7 @@ const NotesPage = () => {
   
   const[notes,setNotes] = useState<Note[]>([]);
   const [loading, setLoading] = useState(true);  
+  const [searchTerm , setSearchTerm] = useState("");
 
     const fetchNotes = async () => {
       const data = await getNotes();
@@ -32,6 +33,17 @@ const NotesPage = () => {
     setNotes((prevNotes) => prevNotes.filter((note) => note._id !== id));
   };    
 
+    const filteredNotes = notes.filter((note) => {
+    const query = searchTerm.toLowerCase();
+
+    return (
+      note.title.toLowerCase().includes(query) ||
+      note.content.toLowerCase().includes(query) ||
+      note.subject?.toLowerCase().includes(query) ||
+      note.tags?.some((tag) => tag.toLowerCase().includes(query))
+    );
+  });
+
     if(loading){
       <p>Loading notes...</p>
     }
@@ -41,10 +53,18 @@ const NotesPage = () => {
     <div>
         <h1>Saved Study Materials</h1>
 
-        {notes.length === 0 ? (
+      <input
+        type="text"
+        placeholder="Search saved notes..."
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+      />
+
+
+        {filteredNotes.length === 0 ? (
         <p>No saved notes yet. Generate notes first, then save them here.</p>
         ) : (
-        notes.map((note) => (
+        filteredNotes.map((note) => (
           <div key={note._id}>
             <Link to={`/notes/${note._id}`}>
               <h2>{note.title}</h2>
