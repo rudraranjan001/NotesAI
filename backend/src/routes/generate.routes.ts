@@ -38,6 +38,13 @@ router.post("/" , authMiddleware,async(req,res) => {
             - Do not ask follow-up questions.
             - Return only the final study material.
 
+            Use Markdown formatting:
+            - Use ## for main headings
+            - Use bullet points for lists
+            - Use tables for comparison charts
+            - Use Q: and A: format for flashcards
+            - Add blank lines between sections
+
             Format instructions:
 
             If format is "full notes":
