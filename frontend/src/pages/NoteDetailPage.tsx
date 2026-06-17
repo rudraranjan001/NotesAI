@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { getNoteById, updateNote } from "../services/notesApi";
+import ReactMarkdown from "react-markdown"
+import remarkGfm from "remark-gfm";
 
 type Note = {
   _id: string;
@@ -51,7 +53,9 @@ const NoteDetailPage = () => {
   return (
     <div>
       <h1>{note.title}</h1>
-      <p>{note.content}</p>
+      <ReactMarkdown remarkPlugins={[remarkGfm]}>
+        {note.content}
+      </ReactMarkdown>
       {note.subject && <p>{note.subject}</p>}
 
       <form onSubmit={handleUpdateNote}>

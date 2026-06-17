@@ -1,6 +1,8 @@
 import { useState, useRef } from "react";
 import { generateNotes } from "../services/generateApi";
 import { createNote } from "../services/notesApi";
+import ReactMarkdown from "react-markdown"
+import remarkGfm from "remark-gfm";
 
 function GeneratePage() {
   const [topic, setTopic] = useState("");
@@ -88,7 +90,9 @@ function GeneratePage() {
       {result && (
         <div>
             <h2>{result.title}</h2>
-            <p>{result.content}</p>
+            <ReactMarkdown remarkPlugins={[remarkGfm]}>
+              {result.content}
+            </ReactMarkdown>
 
             <button onClick={handleSave} disabled={isSaving}>
                 {isSaving ? "Saving..." : hasSaved ? "Saved" : "Save Note"}
