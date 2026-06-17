@@ -1,6 +1,6 @@
 
 import { useEffect,useState } from 'react';
-import { getNotes , createNote , deleteNote } from '../services/notesApi';
+import { getNotes ,  deleteNote } from '../services/notesApi';
 import { Link } from 'react-router-dom';
 
 type Note = {
