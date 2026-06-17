@@ -6,6 +6,7 @@ import LoginPage from "./pages/LoginPage"
 import NoteDetailPage from "./pages/NoteDetailPage"
 import Navbar from "./component/Navbar"
 import ProtectedRoute from "./component/ProtectedRoute"
+import GeneratePage from "./pages/GeneratePage"
 
 function App() {
   
@@ -19,6 +20,14 @@ function App() {
           <Route path = "/notes" element = {<ProtectedRoute><NotesPage /></ProtectedRoute>} />
           <Route path = "/notes/:id" element = {<ProtectedRoute><NoteDetailPage /></ProtectedRoute>} />
           <Route path = "/Login" element = {<LoginPage />} />
+          <Route
+            path="/generate"
+            element={
+              <ProtectedRoute>
+                <GeneratePage />
+              </ProtectedRoute>
+            }
+          />
        </Routes>
     </BrowserRouter>
   )
