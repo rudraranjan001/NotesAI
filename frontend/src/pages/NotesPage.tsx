@@ -60,26 +60,34 @@ const NotesPage = () => {
         onChange={(e) => setSearchTerm(e.target.value)}
       />
 
-
-        {filteredNotes.length === 0 ? (
-        <p>No saved notes yet. Generate notes first, then save them here.</p>
+    {filteredNotes.length === 0 ? (
+      <div>
+        {notes.length === 0 ? (
+          <>
+            <p>No saved notes yet. Generate notes first, then save them here.</p>
+            <Link to="/generate">Generate your first note</Link>
+          </>
         ) : (
-        filteredNotes.map((note) => (
-          <div key={note._id}>
-            <Link to={`/notes/${note._id}`}>
-              <h2>{note.title}</h2>
-            </Link>
-
-            <p>{note.content}</p>
-
-            {note.subject && <p>{note.subject}</p>}
-
-            <button onClick={() => handleDeleteNote(note._id)}>
-              Delete
-            </button>
-            </div>
-          ))
+          <p>No matching notes found.</p>
         )}
+      </div>
+    ) : (
+      filteredNotes.map((note) => (
+        <div key={note._id}>
+          <Link to={`/notes/${note._id}`}>
+            <h2>{note.title}</h2>
+          </Link>
+
+          <p>{note.content}</p>
+
+          {note.subject && <p>{note.subject}</p>}
+
+          <button onClick={() => handleDeleteNote(note._id)}>
+            Delete
+          </button>
+        </div>
+      ))
+    )}
     </div>
   )
 }
