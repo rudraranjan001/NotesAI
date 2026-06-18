@@ -22,6 +22,16 @@ function GeneratePage() {
     return;
   }
 
+    if (topic.trim().length < 2) {
+      setError("Topic is too short.");
+      return;
+    }
+
+    if (topic.length > 120) {
+      setError("Topic is too long. Keep it under 120 characters.");
+      return;
+    }
+
   try {
     setIsGenerating(true);
     setError("");
@@ -35,6 +45,16 @@ function GeneratePage() {
   } finally {
     setIsGenerating(false);
   }
+};
+
+const handleClear = () => {
+  setTopic("");
+  setFormat("summary");
+  setResult(null);
+  setError("");
+  setSavedMessage("");
+  setSaveError("");
+  setHasSaved(false);
 };
 
   const handleSave = async () => {
@@ -84,13 +104,15 @@ function GeneratePage() {
       </select>
 
       <button onClick={handleGenerate} disabled={isGenerating}>
-        {isGenerating ? "Generating..." : "Generate"}
+        {isGenerating ? `Generating ${format}...` : "Generate"}
         </button>
         {error && <p>{error}</p>}
+        <button onClick={handleClear}>Clear</button>
 
       {result && (
         <div>
             <h2>{result.title}</h2>
+            <p>Format: {result.format}</p>
             <ReactMarkdown remarkPlugins={[remarkGfm]}>
               {result.content}
             </ReactMarkdown>

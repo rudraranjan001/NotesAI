@@ -9,6 +9,8 @@ type Note = {
   content: string;
   subject?: string;
   tags?: string[];
+  createdAt?: string;
+  updatedAt?: string;
 };
 
 
@@ -107,6 +109,10 @@ const NotesPage = () => {
           </Link>
 
           {note.subject && <p>{note.subject}</p>}
+
+          {note.createdAt && (
+          <p>Created: {new Date(note.createdAt).toLocaleDateString()}</p>
+        )}
 
           {note.tags && note.tags.length > 0 && (
             <div>
