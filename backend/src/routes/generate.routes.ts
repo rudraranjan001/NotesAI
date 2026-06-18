@@ -8,6 +8,8 @@ const ai = new GoogleGenAI({
     apiKey: process.env.GEMINI_API_KEY,
 });
 
+
+
 router.post("/" , authMiddleware,async(req,res) => {
     const { topic , format} = req.body;
 
@@ -15,6 +17,33 @@ router.post("/" , authMiddleware,async(req,res) => {
         return res.status(400).json({
             message: "Topic and format are required",
         });
+    }
+
+    const allowedFormats = [
+        "summary",
+        "short notes",
+        "full notes",
+        "flashcards",
+        "mind map",
+        "comparison chart",
+    ];
+
+    if (!allowedFormats.includes(format)) {
+    return res.status(400).json({
+        message: "Invalid note format",
+    });
+    }
+
+    if (topic.trim().length < 2) {
+    return res.status(400).json({
+        message: "Topic is too short",
+    });
+    }
+
+    if (topic.length > 120) {
+    return res.status(400).json({
+        message: "Topic is too long",
+    });
     }
 
     try{
