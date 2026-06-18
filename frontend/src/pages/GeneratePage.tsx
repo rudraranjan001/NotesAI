@@ -77,6 +77,7 @@ function GeneratePage() {
       <select value={format} onChange={(e) => setFormat(e.target.value)}>
         <option value="summary">Summary</option>
         <option value="full notes">Full Notes</option>
+        <option value="short notes">Short / Revision Notes</option>
         <option value="flashcards">Flashcards</option>
         <option value="mind map">Mind Map</option>
         <option value="comparison chart">Comparison Chart</option>
