@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Link,useParams } from "react-router-dom";
 import { getNoteById, updateNote } from "../services/notesApi";
 import ReactMarkdown from "react-markdown"
 import remarkGfm from "remark-gfm";
@@ -18,6 +18,7 @@ const NoteDetailPage = () => {
   const[title,setTitle] = useState("");
   const[content,setContent] = useState("");
   const[subject,setSubject] = useState("");
+  const [updateMessage , setUpdateMessage] = useState("");
 
 
   useEffect(() => {
@@ -37,47 +38,77 @@ const NoteDetailPage = () => {
       e.preventDefault();
 
       if (!id) return;
+      setUpdateMessage("");
+
+        if (!title.trim() || !content.trim()) {
+          setUpdateMessage("Title and content are required.");
+          return;
+        }
 
       const updatedNote = await updateNote(id, {
         title,
         content,
         subject,
+        tags: note?.tags,
       });
 
+  
+
       setNote(updatedNote);
+      setUpdateMessage("Note updated successfully");
   };
   if (!note) {
     return <p>Loading note...</p>;
   }
 
   return (
-    <div>
-      <h1>{note.title}</h1>
-      <ReactMarkdown remarkPlugins={[remarkGfm]}>
-        {note.content}
-      </ReactMarkdown>
-      {note.subject && <p>{note.subject}</p>}
+  <div>
+    <Link to="/notes">Back to saved notes</Link>
 
-      <form onSubmit={handleUpdateNote}>
-  <input
-    value={title}
-    onChange={(e) => setTitle(e.target.value)}
-  />
+    <h1>{note.title}</h1>
 
-  <textarea
-    value={content}
-    onChange={(e) => setContent(e.target.value)}
-  />
+    {note.subject && <p>{note.subject}</p>}
 
-  <input
-    value={subject}
-    onChange={(e) => setSubject(e.target.value)}
-  />
+    {note.tags && note.tags.length > 0 && (
+      <div>
+        {note.tags.map((tag) => (
+          <span key={tag}>{tag}</span>
+        ))}
+      </div>
+    )}
 
-  <button type="submit">Update Note</button>
-</form>
-    </div>
-  );
+    <ReactMarkdown remarkPlugins={[remarkGfm]}>
+      {note.content}
+    </ReactMarkdown>
+
+    <form onSubmit={handleUpdateNote}>
+
+      <h2>Edit saved note</h2><br /><br />
+
+      <input
+        value={title}
+        onChange={(e) => setTitle(e.target.value)}
+        placeholder="Title"
+      />
+
+      <textarea
+        value={content}
+        onChange={(e) => setContent(e.target.value)}
+        placeholder="Content"
+        rows={15}
+        style={{ width: "100%" }}
+      />
+
+      <input
+        value={subject}
+        onChange={(e) => setSubject(e.target.value)}
+        placeholder="Subject"
+      />
+      <button type="submit">Update Note</button>
+      {updateMessage && <p>{updateMessage}</p>}
+    </form>
+  </div>
+);
 };
 
 export default NoteDetailPage;
