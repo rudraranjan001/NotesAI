@@ -106,9 +106,15 @@ const NotesPage = () => {
             <h2>{note.title}</h2>
           </Link>
 
-          <p>{note.content}</p>
-
           {note.subject && <p>{note.subject}</p>}
+
+          {note.tags && note.tags.length > 0 && (
+            <div>
+              {note.tags.map((tag) => (
+                <span key={tag}>{tag}</span>
+              ))}
+            </div>
+          )}
 
           <button onClick={() => handleDeleteNote(note._id)}>
             Delete
