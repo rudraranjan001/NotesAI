@@ -8,7 +8,7 @@ type Note = {
   title: string;
   content: string;
   subject?: string;
-  tags: string[];
+  tags?: string[];
 };
 
 
@@ -17,6 +17,7 @@ const NotesPage = () => {
   const[notes,setNotes] = useState<Note[]>([]);
   const [loading, setLoading] = useState(true);  
   const [searchTerm , setSearchTerm] = useState("");
+  const [selectedTag, setSelectedTag] = useState("");
 
     const fetchNotes = async () => {
       const data = await getNotes();
@@ -33,19 +34,27 @@ const NotesPage = () => {
     setNotes((prevNotes) => prevNotes.filter((note) => note._id !== id));
   };    
 
+  const availableTags = Array.from(
+    new Set(notes.flatMap((note) => note.tags || []))
+  );
+
     const filteredNotes = notes.filter((note) => {
     const query = searchTerm.toLowerCase();
 
-    return (
-      note.title.toLowerCase().includes(query) ||
+    const matchesSearch = note.title.toLowerCase().includes(query) ||
       note.content.toLowerCase().includes(query) ||
       note.subject?.toLowerCase().includes(query) ||
-      note.tags?.some((tag) => tag.toLowerCase().includes(query))
-    );
+      note.tags?.some((tag) => tag.toLowerCase().includes(query));
+
+      const matchesTag = selectedTag
+        ? note.tags?.includes(selectedTag)
+        :true;
+      
+        return matchesSearch && matchesTag;
   });
 
     if(loading){
-      <p>Loading notes...</p>
+      return <p>Loading notes...</p>
     }
 
 
@@ -59,6 +68,25 @@ const NotesPage = () => {
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
       />
+
+      <div>
+        <button
+          onClick={() => setSelectedTag("")}
+          style={{ fontWeight: selectedTag === "" ? "bold" : "normal" }}
+          >
+          All
+        </button>
+
+        {availableTags.map((tag) => (
+          <button
+            key={tag}
+            onClick={() => setSelectedTag(tag)}
+            style={{ fontWeight: selectedTag === tag ? "bold" : "normal" }}
+          >
+            {tag}
+          </button>
+        ))}
+      </div>
 
     {filteredNotes.length === 0 ? (
       <div>
