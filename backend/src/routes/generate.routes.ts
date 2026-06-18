@@ -38,12 +38,18 @@ router.post("/" , authMiddleware,async(req,res) => {
             - Do not ask follow-up questions.
             - Return only the final study material.
 
-            Use Markdown formatting:
-            - Use ## for main headings
-            - Use bullet points for lists
-            - Use tables for comparison charts
-            - Use Q: and A: format for flashcards
-            - Add blank lines between sections
+            Markdown formatting rules:
+            - Use Markdown formatting in the response.
+            - Use ## for main section headings.
+            - Use ### for smaller subheadings.
+            - Use bullet points for lists.
+            - Use numbered lists only for step-by-step sequences.
+            - Use Markdown tables for comparison charts.
+            - Put blank lines between sections.
+            - For flashcards, use this format:
+            ### Flashcard 1
+            **Q:** question
+            **A:** answer
 
             Format instructions:
 
@@ -99,7 +105,7 @@ router.post("/" , authMiddleware,async(req,res) => {
         });
 
         res.json({
-        title: `${format} on ${topic}`,
+        title: `${topic} - ${format}`,
         format,
         content: response.text,
         });
