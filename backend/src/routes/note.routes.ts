@@ -6,7 +6,9 @@ const router = Router();
 
 router.get("/",authMiddleware,async(req,res) => { //it list all notes
     try{
-        const notes = await Note.find({ userId: (req as any).uid }); //ye kya karega? ye mongodb mein jaega aur saare notes ko find karega notes collection mein
+        const notes = await Note.find({ userId: (req as any).uid }).sort({
+        createdAt: -1,
+        }); //ye kya karega? ye mongodb mein jaega aur saare notes ko find karega notes collection mein
         res.json(notes);
     }
     catch(error){
@@ -42,18 +44,17 @@ router.post("/",authMiddleware, async (req,res) => { // it creates a note
 
 router.get("/:id",authMiddleware,async(req,res) => { //it get one specific notes
     try{
-        const note = await Note.findOne({
-            _id: req.params.id,
-            userId: (req as any).uid,
-            });//req.param.id it means express read the id  from the url
+        const notes = await Note.find({ userId: (req as any).uid }).sort({
+            createdAt: -1,
+        });//req.param.id it means express read the id  from the url
 
-        if(!note){
+        if(!notes){
             return res.status(404).json({
                 message:"Note not found",
             });
         }
 
-        res.json(note);
+        res.json(notes);
     }
     catch(error){
         res.status(500).json({

@@ -19,7 +19,7 @@ const NoteDetailPage = () => {
   const[content,setContent] = useState("");
   const[subject,setSubject] = useState("");
   const [updateMessage , setUpdateMessage] = useState("");
-
+  const [updateError,setUpdateError] = useState("");
 
   useEffect(() => {
     const fetchNote = async () => {
@@ -41,21 +41,23 @@ const NoteDetailPage = () => {
       setUpdateMessage("");
 
         if (!title.trim() || !content.trim()) {
-          setUpdateMessage("Title and content are required.");
+          setUpdateError("Title and content are required.");
           return;
         }
-
-      const updatedNote = await updateNote(id, {
-        title,
-        content,
-        subject,
-        tags: note?.tags,
-      });
-
-  
-
+      try{
+          const updatedNote = await updateNote(id, {
+          title,
+          content,
+          subject,
+          tags: note?.tags,
+        });
+      
       setNote(updatedNote);
       setUpdateMessage("Note updated successfully");
+      }
+      catch(error){
+        setUpdateError("Failed to update note. Please try again.")
+      }
   };
   if (!note) {
     return <p>Loading note...</p>;
@@ -106,6 +108,7 @@ const NoteDetailPage = () => {
       />
       <button type="submit">Update Note</button>
       {updateMessage && <p>{updateMessage}</p>}
+      {updateError && <p>{updateError}</p>}
     </form>
   </div>
 );
