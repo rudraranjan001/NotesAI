@@ -20,6 +20,8 @@ const NotesPage = () => {
   const [loading, setLoading] = useState(true);  
   const [searchTerm , setSearchTerm] = useState("");
   const [selectedTag, setSelectedTag] = useState("");
+  const [deleteError, setDeleteError] = useState("");
+  const [deletingNoteId, setDeletingNoteId] = useState("");
 
     const fetchNotes = async () => {
       const data = await getNotes();
@@ -32,9 +34,25 @@ const NotesPage = () => {
 
 
   const handleDeleteNote = async (id: string) => {
-    await deleteNote(id);
-    setNotes((prevNotes) => prevNotes.filter((note) => note._id !== id));
-  };    
+    const confirmDelete = window.confirm("Delete this saved note?");
+
+    if (!confirmDelete) {
+      return;
+    }
+
+    try{
+      setDeleteError("");
+      setDeletingNoteId(id);
+
+      await deleteNote(id);
+      setNotes(notes.filter((note) => note._id !== id));
+    }catch(error){
+      setDeleteError("Failed to delete note. Please try again.");
+    }
+    finally{
+      setDeletingNoteId("");
+    }
+  };
 
   const availableTags = Array.from(
     new Set(notes.flatMap((note) => note.tags || []))
@@ -63,6 +81,7 @@ const NotesPage = () => {
   return (
     <div>
         <h1>Saved Study Materials</h1>
+        {deleteError && <p>{deleteError}</p>}
 
       <input
         type="text"
@@ -122,9 +141,12 @@ const NotesPage = () => {
             </div>
           )}
 
-          <button onClick={() => handleDeleteNote(note._id)}>
-            Delete
-          </button>
+          <button
+          onClick={() => handleDeleteNote(note._id)}
+          disabled={deletingNoteId === note._id}
+        >
+          {deletingNoteId === note._id ? "Deleting..." : "Delete"}
+        </button>
         </div>
       ))
     )}
