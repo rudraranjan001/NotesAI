@@ -79,9 +79,15 @@ const NotesPage = () => {
 
 
   return (
-    <div>
-        <h1>Saved Study Materials</h1>
-        {deleteError && <p>{deleteError}</p>}
+    <div className="page-shell">
+      <div className="library-header">
+        <div>
+          <h1>Saved Study Materials</h1>
+          <p className="muted-text">Search and manage your generated notes.</p>
+        </div>
+        <Link to="/generate">Generate New</Link>
+      </div>
+      {deleteError && <p>{deleteError}</p>}
 
       <input
         type="text"
@@ -90,7 +96,7 @@ const NotesPage = () => {
         onChange={(e) => setSearchTerm(e.target.value)}
       />
 
-      <div>
+      <div className="tag-row">
         <button
           onClick={() => setSelectedTag("")}
           style={{ fontWeight: selectedTag === "" ? "bold" : "normal" }}
@@ -122,21 +128,21 @@ const NotesPage = () => {
       </div>
     ) : (
       filteredNotes.map((note) => (
-        <div key={note._id}>
+        <article className="note-card" key={note._id}>
           <Link to={`/notes/${note._id}`}>
             <h2>{note.title}</h2>
           </Link>
 
-          {note.subject && <p>{note.subject}</p>}
+          {note.subject && <p className="muted-text">{note.subject}</p>}
 
           {note.createdAt && (
-          <p>Created: {new Date(note.createdAt).toLocaleDateString()}</p>
+          <p className="muted-text">Created: {new Date(note.createdAt).toLocaleDateString()}</p>
         )}
 
           {note.tags && note.tags.length > 0 && (
-            <div>
+            <div className="tag-row">
               {note.tags.map((tag) => (
-                <span key={tag}>{tag}</span>
+                <span className="tag" key={tag}>{tag}</span>
               ))}
             </div>
           )}
@@ -147,7 +153,7 @@ const NotesPage = () => {
         >
           {deletingNoteId === note._id ? "Deleting..." : "Delete"}
         </button>
-        </div>
+        </article>
       ))
     )}
     </div>

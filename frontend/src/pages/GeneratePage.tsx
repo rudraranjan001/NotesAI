@@ -4,6 +4,15 @@ import { createNote } from "../services/notesApi";
 import ReactMarkdown from "react-markdown"
 import remarkGfm from "remark-gfm";
 
+const formatDescriptions: Record<string, string> = {
+  summary: "Quick overview of the most important ideas.",
+  "short notes": "Fast revision bullets for exam prep.",
+  "full notes": "Detailed study notes with sections and examples.",
+  flashcards: "Question-answer cards for active recall.",
+  "mind map": "A structured topic map with branches and sub-points.",
+  "comparison chart": "A table for comparing concepts side by side.",
+};
+
 function GeneratePage() {
   const [topic, setTopic] = useState("");
   const [format, setFormat] = useState("summary");
@@ -85,45 +94,64 @@ const handleClear = () => {
     }
 
   return (
-    <div>
-      <h1>Generate Notes</h1>
+    <div className="page-shell">
+      <section className="generate-panel">
+        <div>
+          <h1>Generate Study Material</h1>
+          <p className="muted-text">
+            Enter a topic, choose a format, then save the result to your study library.
+          </p>
+        </div>
 
-      <input
-        value={topic}
-        onChange={(e) => setTopic(e.target.value)}
-        placeholder="Enter a topic"
-      />
+        <label>
+          Topic
+          <input
+            value={topic}
+            onChange={(e) => setTopic(e.target.value)}
+            placeholder="Enter a topic"
+          />
+        </label>
 
-      <select value={format} onChange={(e) => setFormat(e.target.value)}>
-        <option value="summary">Summary</option>
-        <option value="full notes">Full Notes</option>
-        <option value="short notes">Short / Revision Notes</option>
-        <option value="flashcards">Flashcards</option>
-        <option value="mind map">Mind Map</option>
-        <option value="comparison chart">Comparison Chart</option>
-      </select>
+        <label>
+          Format
+          <select value={format} onChange={(e) => setFormat(e.target.value)}>
+            <option value="summary">Summary</option>
+            <option value="short notes">Short / Revision Notes</option>
+            <option value="full notes">Full Notes</option>
+            <option value="flashcards">Flashcards</option>
+            <option value="mind map">Mind Map</option>
+            <option value="comparison chart">Comparison Chart</option>
+          </select>
+        </label>
 
-      <button onClick={handleGenerate} disabled={isGenerating}>
-        {isGenerating ? `Generating ${format}...` : "Generate"}
-        </button>
+        <p className="format-help">{formatDescriptions[format]}</p>
+
+        <div className="actions-row">
+          <button onClick={handleGenerate} disabled={isGenerating}>
+            {isGenerating ? `Generating ${format}...` : "Generate"}
+          </button>
+          <button onClick={handleClear}>Clear</button>
+        </div>
         {error && <p>{error}</p>}
-        <button onClick={handleClear}>Clear</button>
+      </section>
 
       {result && (
-        <div>
+        <section className="result-panel">
             <h2>{result.title}</h2>
-            <p>Format: {result.format}</p>
-            <ReactMarkdown remarkPlugins={[remarkGfm]}>
-              {result.content}
-            </ReactMarkdown>
+            <p className="tag">Format: {result.format}</p>
+            <div className="markdown-content">
+              <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                {result.content}
+              </ReactMarkdown>
+            </div>
 
-            <button onClick={handleSave} disabled={isSaving}>
+            <button onClick={handleSave} disabled={isSaving || hasSaved}>
                 {isSaving ? "Saving..." : hasSaved ? "Saved" : "Save Note"}
             </button>
 
             {savedMessage && <p>{savedMessage}</p>}
             {saveError && <p>{saveError}</p>}
-        </div>
+        </section>
         )}
     </div>
   );

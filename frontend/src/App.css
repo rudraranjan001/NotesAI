@@ -1,0 +1,93 @@
+.page-shell {
+  width: min(960px, calc(100% - 32px));
+  margin: 32px auto;
+}
+
+.generate-panel,
+.result-panel,
+.note-card,
+.edit-form {
+  border: 1px solid #d9dee8;
+  border-radius: 8px;
+  padding: 20px;
+  margin-top: 18px;
+  background: #ffffff;
+}
+
+.library-header,
+.detail-header,
+.actions-row,
+.tag-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.library-header,
+.detail-header {
+  justify-content: space-between;
+}
+
+.muted-text,
+.format-help {
+  color: #5f6b7a;
+}
+
+label {
+  display: grid;
+  gap: 6px;
+  margin-top: 14px;
+  font-weight: 600;
+}
+
+input,
+select,
+textarea {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px;
+  border: 1px solid #c7ceda;
+  border-radius: 6px;
+  font: inherit;
+}
+
+button,
+a {
+  margin-top: 8px;
+}
+
+.tag {
+  display: inline-block;
+  border: 1px solid #c7ceda;
+  border-radius: 999px;
+  padding: 4px 10px;
+  color: #243044;
+  background: #f5f7fb;
+  font-size: 0.9rem;
+}
+
+.note-card h2 {
+  margin-bottom: 6px;
+}
+
+.markdown-content {
+  line-height: 1.65;
+}
+
+.markdown-content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 16px 0;
+}
+
+.markdown-content th,
+.markdown-content td {
+  border: 1px solid #d9dee8;
+  padding: 8px;
+  text-align: left;
+}
+
+.markdown-content th {
+  background: #f5f7fb;
+}

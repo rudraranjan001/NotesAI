@@ -72,32 +72,47 @@ const NoteDetailPage = () => {
     return <p>Loading note...</p>;
   }
 
+  const handleCancelEdit = () => {
+    setTitle(note.title);
+    setContent(note.content);
+    setSubject(note.subject || "");
+    setUpdateError("");
+    setIsEditing(false);
+  };
+
   return (
-  <div>
+  <div className="page-shell">
     <Link to="/notes">Back to saved notes</Link>
 
-    <h1>{note.title}</h1>
+    <div className="detail-header">
+      <div>
+        <h1>{note.title}</h1>
+        {note.subject && <p className="muted-text">{note.subject}</p>}
+      </div>
 
-    {note.subject && <p>{note.subject}</p>}
+      {!isEditing && (
+        <button onClick={() => setIsEditing(true)}>Edit Note</button>
+      )}
+    </div>
+
+    {updateMessage && <p>{updateMessage}</p>}
 
     {note.tags && note.tags.length > 0 && (
-      <div>
+      <div className="tag-row">
         {note.tags.map((tag) => (
-          <span key={tag}>{tag}</span>
+          <span className="tag" key={tag}>{tag}</span>
         ))}
       </div>
     )}
 
-    <ReactMarkdown remarkPlugins={[remarkGfm]}>
-      {note.content}
-    </ReactMarkdown>
-
-    {!isEditing && (
-      <button onClick={() => setIsEditing(true)}>Edit Note</button>
-    )}
+    <div className="markdown-content">
+      <ReactMarkdown remarkPlugins={[remarkGfm]}>
+        {note.content}
+      </ReactMarkdown>
+    </div>
 
     {isEditing && (
-    <form onSubmit={handleUpdateNote}>
+    <form className="edit-form" onSubmit={handleUpdateNote}>
 
       <h2>Edit saved note</h2><br /><br />
 
@@ -123,10 +138,9 @@ const NoteDetailPage = () => {
       <button type="submit" disabled={isUpdating}>
         {isUpdating ? "Updating..." : "Update Note"}
       </button>
-      <button type="button" onClick={() => setIsEditing(false)}>
+      <button type="button" onClick={handleCancelEdit}>
         Cancel
       </button>
-      {updateMessage && <p>{updateMessage}</p>}
       {updateError && <p>{updateError}</p>}
     </form>
     )}
