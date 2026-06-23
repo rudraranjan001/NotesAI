@@ -22,11 +22,18 @@ const NoteDetailPage = () => {
   const [updateError,setUpdateError] = useState("");
   const [isUpdating, setIsUpdating] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
+  const [loadError, setLoadError] = useState("");
 
   useEffect(() => {
     const fetchNote = async () => {
       if (!id) return;
       const data = await getNoteById(id);
+
+      if (!data) {
+        setLoadError("Note not found.");
+        return;
+      }
+
       setNote(data);
       setTitle(data.title);
       setContent(data.content);
@@ -69,6 +76,15 @@ const NoteDetailPage = () => {
   };
 
   if (!note) {
+    if (loadError) {
+      return (
+        <main className="mx-auto w-full max-w-5xl px-4 py-10 sm:px-6 lg:px-8">
+          <Link className="text-sm font-semibold text-teal-700 hover:text-teal-800" to="/notes">Back to saved notes</Link>
+          <p className="mt-5 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm font-medium text-red-700">{loadError}</p>
+        </main>
+      );
+    }
+
     return <p className="mx-auto w-full max-w-6xl px-4 py-10 text-slate-600 sm:px-6 lg:px-8">Loading note...</p>;
   }
 

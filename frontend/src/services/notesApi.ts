@@ -17,6 +17,10 @@ export const createNote = async (noteData: {
 
 export const getNoteById = async (id:string) => {
   const response = await api.get(`/notes/${id}`);
+  if (Array.isArray(response.data)) {
+    return response.data.find((note) => note._id === id) || null;
+  }
+
   return response.data;
 };
 
