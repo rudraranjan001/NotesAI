@@ -1,4 +1,5 @@
 import { useState, useRef } from "react";
+import { Link } from "react-router-dom";
 import { generateNotes } from "../services/generateApi";
 import { createNote } from "../services/notesApi";
 import ReactMarkdown from "react-markdown"
@@ -23,20 +24,26 @@ function GeneratePage() {
   const [isSaving, setIsSaving] = useState(false);
   const [saveError, setSaveError] = useState("");
   const [hasSaved, setHasSaved ] = useState(false);
+  const [savedNoteId, setSavedNoteId] = useState("");
+  const [copyMessage, setCopyMessage] = useState("");
   const savingRef = useRef(false);
+  const trimmedTopic = topic.trim();
+  const topicTooShort = trimmedTopic.length > 0 && trimmedTopic.length < 2;
+  const topicTooLong = topic.length > 120;
+  const canGenerate = trimmedTopic.length >= 2 && !topicTooLong && !isGenerating;
 
   const handleGenerate = async () => {
-  if (!topic.trim()) {
+  if (!trimmedTopic) {
     setError("Please enter a topic.");
     return;
   }
 
-    if (topic.trim().length < 2) {
+    if (topicTooShort) {
       setError("Topic is too short.");
       return;
     }
 
-    if (topic.length > 120) {
+    if (topicTooLong) {
       setError("Topic is too long. Keep it under 120 characters.");
       return;
     }
@@ -45,6 +52,9 @@ function GeneratePage() {
     setIsGenerating(true);
     setError("");
     setSavedMessage("");
+    setSaveError("");
+    setSavedNoteId("");
+    setCopyMessage("");
     setHasSaved(false);
 
     const data = await generateNotes({ topic, format });
@@ -63,7 +73,20 @@ const handleClear = () => {
   setError("");
   setSavedMessage("");
   setSaveError("");
+  setSavedNoteId("");
+  setCopyMessage("");
   setHasSaved(false);
+};
+
+const handleCopy = async () => {
+  if (!result?.content) return;
+
+  try {
+    await navigator.clipboard.writeText(result.content);
+    setCopyMessage("Copied notes to clipboard.");
+  } catch {
+    setCopyMessage("Copy failed. Select the text and copy it manually.");
+  }
 };
 
   const handleSave = async () => {
@@ -76,13 +99,14 @@ const handleClear = () => {
             setSavedMessage("");
             
 
-            await createNote({
+            const savedNote = await createNote({
                 title: result.title,
                 content: result.content,
                 subject: topic,
                 tags: [format],
             });
             setHasSaved(true);
+            setSavedNoteId(savedNote?._id || "");
 
             setSavedMessage("Saved to your notes.");
         }catch{
@@ -109,14 +133,30 @@ const handleClear = () => {
           <input
             className="rounded-lg border border-slate-300 px-3 py-3 text-slate-900 outline-none transition focus:border-teal-500 focus:ring-4 focus:ring-teal-100"
             value={topic}
-            onChange={(e) => setTopic(e.target.value)}
+            onChange={(e) => {
+              setTopic(e.target.value);
+              setError("");
+            }}
             placeholder="Example: Human nervous system"
           />
         </label>
+        <div className="mt-2 flex items-center justify-between gap-3 text-xs">
+          <p className={topicTooShort || topicTooLong ? "font-medium text-red-600" : "text-slate-500"}>
+            {topicTooLong ? "Keep the topic under 120 characters." : topicTooShort ? "Use at least 2 characters." : "Be specific for better output."}
+          </p>
+          <span className={topicTooLong ? "font-semibold text-red-600" : "text-slate-500"}>{topic.length}/120</span>
+        </div>
 
         <label className="mt-4 grid gap-2 text-sm font-semibold text-slate-800">
           <span>Format</span>
-          <select className="rounded-lg border border-slate-300 px-3 py-3 text-slate-900 outline-none transition focus:border-teal-500 focus:ring-4 focus:ring-teal-100" value={format} onChange={(e) => setFormat(e.target.value)}>
+          <select className="rounded-lg border border-slate-300 px-3 py-3 text-slate-900 outline-none transition focus:border-teal-500 focus:ring-4 focus:ring-teal-100" value={format} onChange={(e) => {
+            setFormat(e.target.value);
+            setSavedMessage("");
+            setSaveError("");
+            setSavedNoteId("");
+            setCopyMessage("");
+            setHasSaved(false);
+          }}>
             <option value="summary">Summary</option>
             <option value="short notes">Short / Revision Notes</option>
             <option value="full notes">Full Notes</option>
@@ -129,7 +169,7 @@ const handleClear = () => {
         <p className="mt-3 rounded-lg bg-slate-50 px-3 py-3 text-sm leading-6 text-slate-600">{formatDescriptions[format]}</p>
 
         <div className="mt-5 flex flex-wrap gap-3">
-          <button className="rounded-lg bg-teal-600 px-5 py-3 font-semibold text-white shadow-sm hover:bg-teal-700 disabled:cursor-not-allowed disabled:bg-slate-300" onClick={handleGenerate} disabled={isGenerating}>
+          <button className="rounded-lg bg-teal-600 px-5 py-3 font-semibold text-white shadow-sm hover:bg-teal-700 disabled:cursor-not-allowed disabled:bg-slate-300" onClick={handleGenerate} disabled={!canGenerate}>
             {isGenerating ? `Generating ${format}...` : "Generate"}
           </button>
           <button className="rounded-lg border border-slate-300 px-5 py-3 font-semibold text-slate-800 hover:bg-slate-100" onClick={handleClear}>Clear</button>
@@ -144,9 +184,17 @@ const handleClear = () => {
                 <h2 className="text-2xl font-bold tracking-tight text-slate-950">{result.title}</h2>
                 <p className="mt-2 inline-flex rounded-full border border-teal-200 bg-teal-50 px-3 py-1 text-sm font-semibold text-teal-800">Format: {result.format}</p>
               </div>
+              <div className="flex flex-wrap gap-3">
+              <button className="rounded-lg border border-slate-300 px-5 py-3 font-semibold text-slate-800 hover:bg-slate-100" onClick={handleCopy}>
+                  Copy
+              </button>
+              <button className="rounded-lg border border-slate-300 px-5 py-3 font-semibold text-slate-800 hover:bg-slate-100 disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-400" onClick={handleGenerate} disabled={!canGenerate}>
+                  Regenerate
+              </button>
               <button className="rounded-lg bg-slate-950 px-5 py-3 font-semibold text-white shadow-sm hover:bg-slate-800 disabled:cursor-not-allowed disabled:bg-slate-300" onClick={handleSave} disabled={isSaving || hasSaved}>
                   {isSaving ? "Saving..." : hasSaved ? "Saved" : "Save Note"}
               </button>
+              </div>
             </div>
 
             <div className="mt-6 max-w-none leading-7 text-slate-700 [&_h1]:text-3xl [&_h1]:font-bold [&_h1]:text-slate-950 [&_h2]:mt-6 [&_h2]:text-2xl [&_h2]:font-bold [&_h2]:text-slate-950 [&_h3]:mt-5 [&_h3]:text-xl [&_h3]:font-bold [&_h3]:text-slate-950 [&_li]:my-1 [&_ol]:ml-6 [&_ol]:list-decimal [&_p]:my-3 [&_strong]:text-slate-950 [&_table]:my-5 [&_table]:block [&_table]:w-full [&_table]:overflow-x-auto [&_td]:border [&_td]:border-slate-200 [&_td]:p-3 [&_th]:border [&_th]:border-slate-200 [&_th]:bg-slate-50 [&_th]:p-3 [&_th]:text-left [&_ul]:ml-6 [&_ul]:list-disc">
@@ -156,6 +204,17 @@ const handleClear = () => {
             </div>
 
             {savedMessage && <p className="mt-4 rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm font-medium text-emerald-700">{savedMessage}</p>}
+            {savedNoteId && (
+              <div className="mt-3 flex flex-wrap gap-3">
+                <Link className="rounded-lg bg-teal-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-teal-700" to={`/notes/${savedNoteId}`}>
+                  Open saved note
+                </Link>
+                <Link className="rounded-lg border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-800 hover:bg-slate-100" to="/notes">
+                  Go to library
+                </Link>
+              </div>
+            )}
+            {copyMessage && <p className="mt-4 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-medium text-slate-700">{copyMessage}</p>}
             {saveError && <p className="mt-4 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm font-medium text-red-700">{saveError}</p>}
         </section>
         )}
