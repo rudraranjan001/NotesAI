@@ -7,6 +7,7 @@ import NoteDetailPage from "./pages/NoteDetailPage"
 import Navbar from "./component/Navbar"
 import ProtectedRoute from "./component/ProtectedRoute"
 import GeneratePage from "./pages/GeneratePage"
+import Footer  from "./pages/Footer"
 
 function App() {
   
@@ -22,6 +23,7 @@ function App() {
           <Route path = "/login" element = {<LoginPage />} />
           <Route path="/generate" element={ <ProtectedRoute> <GeneratePage /></ProtectedRoute> } />
        </Routes>
+       <Footer />
     </BrowserRouter>
   )
 }
