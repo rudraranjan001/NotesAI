@@ -3,6 +3,7 @@ import { Link,useParams } from "react-router-dom";
 import { getNoteById, updateNote } from "../services/notesApi";
 import FlashcardView from "../component/FlashcardView";
 import MarkdownView from "../component/MarkdownView";
+import MindMapView from "../component/MarkdownView";
 
 type Note = {
   _id: string;
@@ -125,6 +126,8 @@ const NoteDetailPage = () => {
     <article className="mt-6 rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
       {note.tags?.includes("flashcards") ? (
         <FlashcardView content={note.content} />
+      ) : note.tags?.includes("mind map") ? (
+        <MindMapView content={note.content} />
       ) : (
         <div className="overflow-x-auto rounded-xl border border-slate-200">
           <MarkdownView content={note.content} />
