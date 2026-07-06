@@ -4,6 +4,7 @@ import { generateNotes } from "../services/generateApi";
 import { createNote } from "../services/notesApi";
 import FlashcardView from "../component/FlashcardView";
 import MarkdownView from "../component/MarkdownView";
+import MindMapView from "../component/MarkdownView";
 
 const formatDescriptions: Record<string, string> = {
   summary: "Quick overview of the most important ideas.",
@@ -199,12 +200,14 @@ const handleCopy = async () => {
 
             <div className="mt-6">
               {result.format === "flashcards" ? (
-                <FlashcardView content={result.content} />
-              ) : (
-                <div className="overflow-x-auto rounded-xl border border-slate-200">
-                  <MarkdownView content={result.content} />
-                </div>
-              )}
+              <FlashcardView content={result.content} />
+            ) : result.format === "mind map" ? (
+              <MindMapView content={result.content} />
+            ) : (
+              <div className="overflow-x-auto rounded-xl border border-slate-200">
+                <MarkdownView content={result.content} />
+              </div>
+            )}
             </div>
 
             {savedMessage && <p className="mt-4 rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm font-medium text-emerald-700">{savedMessage}</p>}
