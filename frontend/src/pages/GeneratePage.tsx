@@ -15,10 +15,16 @@ const formatDescriptions: Record<string, string> = {
   "comparison chart": "A table for comparing concepts side by side.",
 };
 
+type GeneratedResult = {
+  title: string;
+  format: string;
+  content: string;
+};
+
 function GeneratePage() {
   const [topic, setTopic] = useState("");
   const [format, setFormat] = useState("summary");
-  const [result, setResult] = useState<any>(null);
+  const [result, setResult] = useState<GeneratedResult | null>(null);
   const [savedMessage , setSavedMessage] = useState("");
   const [isGenerating , setIsGenerating] = useState(false);
   const [error , setError] = useState("");

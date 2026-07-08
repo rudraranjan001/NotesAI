@@ -23,13 +23,23 @@ const NotesPage = () => {
   const [deleteError, setDeleteError] = useState("");
   const [deletingNoteId, setDeletingNoteId] = useState("");
 
-    const fetchNotes = async () => {
-      const data = await getNotes();
-      setNotes(data);
-      setLoading(false);
-    };  
     useEffect(() => {
+      let ignore = false;
+
+      const fetchNotes = async () => {
+        const data = await getNotes();
+
+        if (!ignore) {
+          setNotes(data);
+          setLoading(false);
+        }
+      };
+
       fetchNotes();
+
+      return () => {
+        ignore = true;
+      };
     },[]);
 
 

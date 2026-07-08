@@ -8,12 +8,21 @@ import Navbar from "./component/Navbar"
 import ProtectedRoute from "./component/ProtectedRoute"
 import GeneratePage from "./pages/GeneratePage"
 import Footer  from "./pages/Footer"
+import TargetCursor from "./cursor/TargetCursor"
 
 function App() {
   
 
   return (
     <BrowserRouter>
+    <TargetCursor 
+          spinDuration={2}
+          hideDefaultCursor
+          parallaxOn
+          hoverDuration={0.2}
+          cursorColor="#111827"
+          cursorColorOnTarget="#B497CF"
+        />  
       <Navbar />
        <Routes>
           <Route path = "/" element = {<HomePage />} />
