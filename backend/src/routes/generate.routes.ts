@@ -83,9 +83,13 @@ router.post("/" , authMiddleware,async(req,res) => {
             Format instructions:
 
             If format is "full notes":
-            - Give detailed notes.
-            - Include introduction, definitions, key concepts, explanations, examples, and conclusion.
-            - Use headings and bullet points.
+            - Write detailed textbook-style study notes.
+            - Use clear section headings.
+            - Under each heading, explain the topic in complete paragraphs.
+            - Avoid using bullet points as the main structure.
+            - Use bullet points only for examples, formulas, key terms, or short lists.
+            - Include introduction, definitions, key concepts, explanation, examples, and conclusion.
+            - Make it feel like complete classroom notes.   
 
             If format is "summary":
             - Give a short, clear summary.
