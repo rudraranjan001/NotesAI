@@ -43,24 +43,20 @@ router.post("/",authMiddleware, async (req,res) => { // it creates a note
 });
 
 router.get("/:id",authMiddleware,async(req,res) => { //it get one specific notes
-    try{
-        const notes = await Note.find({ userId: (req as any).uid }).sort({
-            createdAt: -1,
-        });//req.param.id it means express read the id  from the url
+        try {
+        const note = await Note.findOne({
+            _id: req.params.id,
+            userId: (req as any).uid,
+        });
 
-        if(!notes){
-            return res.status(404).json({
-                message:"Note not found",
-            });
+        if (!note) {
+            return res.status(404).json({ message: "Note not found" });
         }
 
-        res.json(notes);
-    }
-    catch(error){
-        res.status(500).json({
-            message:"failed to fetch the notes",
-        });
-    }
+        res.json(note);
+        } catch (error) {
+        res.status(500).json({ message: "Failed to fetch note" });
+        }
 });
 
 router.delete("/:id",authMiddleware,async (req,res) => {
