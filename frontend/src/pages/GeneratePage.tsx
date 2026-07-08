@@ -4,7 +4,7 @@ import { generateNotes } from "../services/generateApi";
 import { createNote } from "../services/notesApi";
 import FlashcardView from "../component/FlashcardView";
 import MarkdownView from "../component/MarkdownView";
-import MindMapView from "../component/MarkdownView";
+import MermaidView from "../component/MermaidView";
 
 const formatDescriptions: Record<string, string> = {
   summary: "Quick overview of the most important ideas.",
@@ -208,7 +208,7 @@ const handleCopy = async () => {
               {result.format === "flashcards" ? (
               <FlashcardView content={result.content} />
             ) : result.format === "mind map" ? (
-              <MindMapView content={result.content} />
+              <MermaidView chart={result.content} />
             ) : (
               <div className="overflow-x-auto rounded-xl border border-slate-200">
                 <MarkdownView content={result.content} />
