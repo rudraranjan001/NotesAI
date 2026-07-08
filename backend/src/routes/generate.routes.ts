@@ -107,10 +107,28 @@ router.post("/" , authMiddleware,async(req,res) => {
             A: answer
             - Make them useful for revision.
 
-            If format is "mind map":
-            - Create a text-based mind map.
-            - Use a main topic, branches, and sub-branches.
-            - Use indentation and bullet points.
+            If the selected format is "mind map", return ONLY valid Mermaid mindmap syntax.
+            Rules:
+            - Start exactly with: mindmap
+            - Do not use Markdown headings.
+            - Do not wrap the output in triple backticks.
+            - Do not add explanation before or after.
+            - Keep each node short.
+            - Avoid special characters like (), [], {}, :, ;, quotes, and arrows inside node text.
+            - Use indentation with two spaces per level.
+
+            Example:
+            mindmap
+            root((Photosynthesis))
+                Definition
+                Process plants use to make food
+                Requirements
+                Sunlight
+                Carbon dioxide
+                Water
+                Products
+                Glucose
+                Oxygen
 
             If format is "comparison chart":
             - Create a comparison table.
