@@ -9,6 +9,8 @@ services:
     envVars:
       - key: NODE_ENV
         value: production
+      - key: NODE_VERSION
+        value: 20
       - key: MONGODB_URI
         sync: false
       - key: CLIENT_URLS
@@ -25,8 +27,7 @@ services:
   - type: web
     name: notesai-frontend
     runtime: static
-    rootDir: frontend
-    buildCommand: npm ci && npm run build
+    buildCommand: cd frontend && npm ci && npm run build
     staticPublishPath: frontend/dist
     envVars:
       - key: VITE_API_URL
