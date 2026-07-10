@@ -1,4 +1,3 @@
-
 import { useEffect,useState } from 'react';
 import { getNotes ,  deleteNote } from '../services/notesApi';
 import { Link } from 'react-router-dom';

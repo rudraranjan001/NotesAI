@@ -3,7 +3,7 @@ import { Link,useParams } from "react-router-dom";
 import { getNoteById, updateNote } from "../services/notesApi";
 import FlashcardView from "../component/FlashcardView";
 import MarkdownView from "../component/MarkdownView";
-import MindMapView from "../component/MarkdownView";
+import MermaidView from "../component/MermaidView";
 
 type Note = {
   _id: string;
@@ -28,17 +28,23 @@ const NoteDetailPage = () => {
   useEffect(() => {
     const fetchNote = async () => {
       if (!id) return;
-      const data = await getNoteById(id);
 
-      if (!data) {
-        setLoadError("Note not found.");
-        return;
+      try {
+        setLoadError("");
+        const data = await getNoteById(id);
+
+        if (!data) {
+          setLoadError("Note not found.");
+          return;
+        }
+
+        setNote(data);
+        setTitle(data.title);
+        setContent(data.content);
+        setSubject(data.subject || "");
+      } catch {
+        setLoadError("Failed to load note. Please go back and try again.");
       }
-
-      setNote(data);
-      setTitle(data.title);
-      setContent(data.content);
-      setSubject(data.subject || "");
     };
 
     fetchNote();
@@ -127,7 +133,7 @@ const NoteDetailPage = () => {
       {note.tags?.includes("flashcards") ? (
         <FlashcardView content={note.content} />
       ) : note.tags?.includes("mind map") ? (
-        <MindMapView content={note.content} />
+        <MermaidView chart={note.content} />
       ) : (
         <div className="overflow-x-auto rounded-xl border border-slate-200">
           <MarkdownView content={note.content} />
