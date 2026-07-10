@@ -17,25 +17,39 @@ console.log("Mongo URI exists:", Boolean(process.env.MONGODB_URI)); //it shows t
 connectDB();
 
 const port = process.env.PORT || 8000;
-const allowedOrigins = (process.env.CLIENT_URLS || process.env.CLIENT_URL || "http://localhost:5173")
+const allowedOrigins = [
+    process.env.CLIENT_URLS,
+    process.env.CLIENT_URL,
+    "http://localhost:5173",
+    "https://notes-ai-rho.vercel.app",
+]
+    .filter(Boolean)
+    .join(",")
     .split(",")
     .map((origin) => origin.trim())
-    .map((origin) => origin.replace(/\/$/, ""))
+    .map((origin) => origin.replace(/\/+$/, ""))
     .filter(Boolean);
 
-app.use(cors({
-     origin: (origin, callback) => {
-        const normalizedOrigin = origin?.replace(/\/$/, "");
+const corsOptions: cors.CorsOptions = {
+    origin: (origin, callback) => {
+        const normalizedOrigin = origin?.replace(/\/+$/, "");
 
         if (!normalizedOrigin || allowedOrigins.includes(normalizedOrigin)) {
             callback(null, true);
             return;
         }
 
-        callback(new Error("Not allowed by CORS"));
-     },
+        if (normalizedOrigin.endsWith(".vercel.app")) {
+            callback(null, true);
+            return;
+        }
+
+        callback(null, false);
+    },
     credentials: true,
-}));//we use cors because it helps us to run frontend and backend on different addresses during develeopment
+};
+
+app.use(cors(corsOptions));//we use cors because it helps us to run frontend and backend on different addresses during develeopment
 //or CORS = permission for frontend and backend to communicate across different origins.
 app.use(express.json());
 
