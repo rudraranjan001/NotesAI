@@ -18,7 +18,10 @@ connectDB();
 
 const port = process.env.PORT || 8000;
 
-app.use(cors());//we use cors because it helps us to run frontend and backend on different addresses during develeopment
+app.use(cors({
+     origin: process.env.CLIENT_URL || "http://localhost:5173",
+    credentials: true,
+}));//we use cors because it helps us to run frontend and backend on different addresses during develeopment
 //or CORS = permission for frontend and backend to communicate across different origins.
 app.use(express.json());
 
