@@ -4,8 +4,17 @@ import { GoogleGenAI } from "@google/genai";
 
 const router = Router();
 
-const primaryModel = process.env.GEMINI_MODEL || "gemini-3.1-flash-lite";
-const fallbackModel = process.env.GEMINI_FALLBACK_MODEL || "gemini-2.5-flash";
+const defaultModelChain = [
+    "gemini-3.1-flash-lite",
+    "gemini-3-flash",
+    "gemini-3.5-flash",
+    "gemini-2.5-flash",
+];
+
+const modelChain = (process.env.GEMINI_MODELS || defaultModelChain.join(","))
+    .split(",")
+    .map((model) => model.trim())
+    .filter(Boolean);
 
 const generateWithModel = async (ai: GoogleGenAI, model: string, prompt: string) => {
     const response = await ai.models.generateContent({
@@ -161,19 +170,22 @@ router.post("/" , authMiddleware,async(req,res) => {
         });
 
         let content = "";
-        let modelUsed = primaryModel;
+        let modelUsed = "";
+        let lastError: unknown;
 
-        try {
-            content = await generateWithModel(ai, primaryModel, prompt);
-        } catch (primaryError) {
-            console.error(`${primaryModel} generate error:`, primaryError);
-
-            if (fallbackModel === primaryModel) {
-                throw primaryError;
+        for (const model of modelChain) {
+            try {
+                content = await generateWithModel(ai, model, prompt);
+                modelUsed = model;
+                break;
+            } catch (modelError) {
+                lastError = modelError;
+                console.error(`${model} generate error:`, modelError);
             }
+        }
 
-            modelUsed = fallbackModel;
-            content = await generateWithModel(ai, fallbackModel, prompt);
+        if (!content) {
+            throw lastError || new Error("No Gemini models are configured");
         }
 
         res.json({
