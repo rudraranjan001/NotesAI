@@ -17,9 +17,20 @@ console.log("Mongo URI exists:", Boolean(process.env.MONGODB_URI)); //it shows t
 connectDB();
 
 const port = process.env.PORT || 8000;
+const allowedOrigins = (process.env.CLIENT_URLS || process.env.CLIENT_URL || "http://localhost:5173")
+    .split(",")
+    .map((origin) => origin.trim())
+    .filter(Boolean);
 
 app.use(cors({
-     origin: process.env.CLIENT_URL || "http://localhost:5173",
+     origin: (origin, callback) => {
+        if (!origin || allowedOrigins.includes(origin)) {
+            callback(null, true);
+            return;
+        }
+
+        callback(new Error("Not allowed by CORS"));
+     },
     credentials: true,
 }));//we use cors because it helps us to run frontend and backend on different addresses during develeopment
 //or CORS = permission for frontend and backend to communicate across different origins.

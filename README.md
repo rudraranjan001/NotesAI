@@ -46,6 +46,11 @@ Backend:
 ```env
 PORT=
 MONGODB_URI=
+CLIENT_URLS=
+FIREBASE_PROJECT_ID=
+FIREBASE_CLIENT_EMAIL=
+FIREBASE_PRIVATE_KEY=
+GEMINI_API_KEY=
 ```
 
 Frontend:
@@ -112,6 +117,32 @@ It checks:
 - backend TypeScript build
 - frontend install
 - frontend production build
+
+## Deployment
+
+This repo includes deployment config for common static/frontend and Node backend hosts.
+
+Frontend:
+
+- Vercel from repo root: use `vercel.json`.
+- Vercel from `frontend/`: use `frontend/vercel.json`.
+- Netlify/static hosts: `frontend/public/_redirects` handles React Router refreshes.
+- Build command: `npm ci && npm run build`
+- Publish directory from `frontend/`: `dist`
+- Publish directory from repo root: `frontend/dist`
+
+Backend:
+
+- Render blueprint: `render.yaml`
+- Build command: `npm ci && npm run build`
+- Start command: `npm start`
+- Health check: `/api/health`
+
+Production env notes:
+
+- Set `VITE_API_URL` to the deployed backend API base, for example `https://your-backend.onrender.com/api`.
+- Set `CLIENT_URLS` on the backend to the deployed frontend origin. Use comma-separated values for multiple origins.
+- Store `FIREBASE_PRIVATE_KEY` with escaped newlines (`\n`) if your host requires single-line env values.
 
 ## Roadmap
 
