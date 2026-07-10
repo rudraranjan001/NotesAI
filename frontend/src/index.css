@@ -19,3 +19,103 @@ textarea {
 a {
   color: inherit;
 }
+
+.app-loader {
+  position: relative;
+  display: grid;
+  min-height: 100vh;
+  place-items: center;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 20% 20%, rgba(20, 184, 166, 0.16), transparent 28%),
+    radial-gradient(circle at 80% 70%, rgba(15, 23, 42, 0.12), transparent 26%),
+    #f7f8fb;
+}
+
+.app-loader__orb {
+  position: absolute;
+  width: min(46vw, 420px);
+  aspect-ratio: 1;
+  border: 1px solid rgba(20, 184, 166, 0.22);
+  border-radius: 999px;
+  animation: loader-orbit 5s ease-in-out infinite;
+}
+
+.app-loader__orb::before,
+.app-loader__orb::after {
+  position: absolute;
+  content: "";
+  border-radius: inherit;
+  inset: 11%;
+  border: 1px solid rgba(15, 23, 42, 0.12);
+}
+
+.app-loader__orb::after {
+  inset: 24%;
+  border-color: rgba(20, 184, 166, 0.3);
+}
+
+.app-loader__content {
+  position: relative;
+  width: min(420px, calc(100% - 32px));
+  text-align: center;
+}
+
+.app-loader__eyebrow {
+  color: #0f766e;
+  font-size: 0.85rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.app-loader__title {
+  margin: 14px 0 22px;
+  color: #0f172a;
+  font-size: 2rem;
+  font-weight: 800;
+}
+
+.app-loader__bar {
+  height: 8px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #dbe3ef;
+}
+
+.app-loader__bar span {
+  display: block;
+  width: 42%;
+  height: 100%;
+  border-radius: inherit;
+  background: #0d9488;
+  animation: loader-progress 1.15s ease-in-out infinite;
+}
+
+@keyframes loader-orbit {
+  0%,
+  100% {
+    transform: rotate(0deg) scale(0.96);
+  }
+
+  50% {
+    transform: rotate(18deg) scale(1.04);
+  }
+}
+
+@keyframes loader-progress {
+  0% {
+    transform: translateX(-110%);
+  }
+
+  100% {
+    transform: translateX(245%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app-loader__orb,
+  .app-loader__bar span {
+    animation: none;
+  }
+}

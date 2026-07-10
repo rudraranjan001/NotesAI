@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react"
 import { BrowserRouter,Routes,Route } from "react-router-dom"
 import HomePage from "./pages/HomePage"
 import DashboardPage from "./pages/DashboardPage"
@@ -9,9 +10,24 @@ import ProtectedRoute from "./component/ProtectedRoute"
 import GeneratePage from "./pages/GeneratePage"
 import Footer  from "./pages/Footer"
 import TargetCursor from "./cursor/TargetCursor"
+import AppLoader from "./component/AppLoader"
+import { useAuth } from "./context/AuthContext"
 
 function App() {
-  
+  const { loading } = useAuth();
+  const [introVisible, setIntroVisible] = useState(true);
+
+  useEffect(() => {
+    const timerId = window.setTimeout(() => {
+      setIntroVisible(false);
+    }, 900);
+
+    return () => window.clearTimeout(timerId);
+  }, []);
+
+  if (loading || introVisible) {
+    return <AppLoader />;
+  }
 
   return (
     <BrowserRouter>
