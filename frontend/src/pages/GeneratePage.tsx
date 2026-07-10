@@ -66,8 +66,9 @@ function GeneratePage() {
 
     const data = await generateNotes({ topic, format });
     setResult(data);
-  } catch {
-    setError("Failed to generate notes. Please try again.");
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Failed to generate notes. Please try again.";
+    setError(message);
   } finally {
     setIsGenerating(false);
   }
@@ -116,8 +117,9 @@ const handleCopy = async () => {
             setSavedNoteId(savedNote?._id || "");
 
             setSavedMessage("Saved to your notes.");
-        }catch{
-            setSaveError("Failed to save note. Please try again.");
+        }catch(error){
+            const message = error instanceof Error ? error.message : "Failed to save note. Please try again.";
+            setSaveError(message);
         }finally{
             savingRef.current = false;
             setIsSaving(false);

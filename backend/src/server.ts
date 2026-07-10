@@ -20,11 +20,14 @@ const port = process.env.PORT || 8000;
 const allowedOrigins = (process.env.CLIENT_URLS || process.env.CLIENT_URL || "http://localhost:5173")
     .split(",")
     .map((origin) => origin.trim())
+    .map((origin) => origin.replace(/\/$/, ""))
     .filter(Boolean);
 
 app.use(cors({
      origin: (origin, callback) => {
-        if (!origin || allowedOrigins.includes(origin)) {
+        const normalizedOrigin = origin?.replace(/\/$/, "");
+
+        if (!normalizedOrigin || allowedOrigins.includes(normalizedOrigin)) {
             callback(null, true);
             return;
         }

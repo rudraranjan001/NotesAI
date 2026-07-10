@@ -4,12 +4,6 @@ import { GoogleGenAI } from "@google/genai";
 
 const router = Router();
 
-const ai = new GoogleGenAI({
-    apiKey: process.env.GEMINI_API_KEY,
-});
-
-
-
 router.post("/" , authMiddleware,async(req,res) => {
     const { topic , format} = req.body;
 
@@ -155,6 +149,12 @@ router.post("/" , authMiddleware,async(req,res) => {
         contents: prompt,
         });
 
+        if (!response.text) {
+            return res.status(502).json({
+                message: "Gemini returned an empty response",
+            });
+        }
+
         res.json({
         title: `${topic} - ${format}`,
         format,
@@ -164,7 +164,7 @@ router.post("/" , authMiddleware,async(req,res) => {
         console.error("Gemini generate error:",error);
 
         res.status(500).json({
-            message: "Failed to generate notes",
+            message: "Failed to generate notes. Check GEMINI_API_KEY on the backend.",
         });
     }
     

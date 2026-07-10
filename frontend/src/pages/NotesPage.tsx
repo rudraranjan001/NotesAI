@@ -20,17 +20,29 @@ const NotesPage = () => {
   const [searchTerm , setSearchTerm] = useState("");
   const [selectedTag, setSelectedTag] = useState("");
   const [deleteError, setDeleteError] = useState("");
+  const [loadError, setLoadError] = useState("");
   const [deletingNoteId, setDeletingNoteId] = useState("");
 
     useEffect(() => {
       let ignore = false;
 
       const fetchNotes = async () => {
-        const data = await getNotes();
+        try {
+          const data = await getNotes();
 
-        if (!ignore) {
-          setNotes(data);
-          setLoading(false);
+          if (!ignore) {
+            setNotes(data);
+            setLoadError("");
+          }
+        } catch (error) {
+          if (!ignore) {
+            const message = error instanceof Error ? error.message : "Failed to load notes.";
+            setLoadError(message);
+          }
+        } finally {
+          if (!ignore) {
+            setLoading(false);
+          }
         }
       };
 
@@ -97,6 +109,7 @@ const NotesPage = () => {
         </div>
         <Link className="rounded-lg bg-teal-600 px-5 py-3 text-center font-semibold text-white shadow-sm hover:bg-teal-700" to="/generate">Generate New</Link>
       </div>
+      {loadError && <p className="mt-4 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm font-medium text-red-700">{loadError}</p>}
       {deleteError && <p className="mt-4 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm font-medium text-red-700">{deleteError}</p>}
 
       <input
