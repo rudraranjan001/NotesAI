@@ -4,6 +4,22 @@ import { GoogleGenAI } from "@google/genai";
 
 const router = Router();
 
+const primaryModel = process.env.GEMINI_MODEL || "gemini-3.1-flash-lite";
+const fallbackModel = process.env.GEMINI_FALLBACK_MODEL || "gemini-2.5-flash";
+
+const generateWithModel = async (ai: GoogleGenAI, model: string, prompt: string) => {
+    const response = await ai.models.generateContent({
+        model,
+        contents: prompt,
+    });
+
+    if (!response.text) {
+        throw new Error(`${model} returned an empty response`);
+    }
+
+    return response.text;
+};
+
 router.post("/" , authMiddleware,async(req,res) => {
     const { topic , format} = req.body;
 
@@ -144,21 +160,27 @@ router.post("/" , authMiddleware,async(req,res) => {
             apiKey,
         });
 
-        const response = await ai.models.generateContent({
-        model: "gemini-2.5-flash",
-        contents: prompt,
-        });
+        let content = "";
+        let modelUsed = primaryModel;
 
-        if (!response.text) {
-            return res.status(502).json({
-                message: "Gemini returned an empty response",
-            });
+        try {
+            content = await generateWithModel(ai, primaryModel, prompt);
+        } catch (primaryError) {
+            console.error(`${primaryModel} generate error:`, primaryError);
+
+            if (fallbackModel === primaryModel) {
+                throw primaryError;
+            }
+
+            modelUsed = fallbackModel;
+            content = await generateWithModel(ai, fallbackModel, prompt);
         }
 
         res.json({
         title: `${topic} - ${format}`,
         format,
-        content: response.text,
+        content,
+        model: modelUsed,
         });
     }catch(error){
         console.error("Gemini generate error:",error);

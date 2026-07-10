@@ -51,6 +51,8 @@ FIREBASE_PROJECT_ID=
 FIREBASE_CLIENT_EMAIL=
 FIREBASE_PRIVATE_KEY=
 GEMINI_API_KEY=
+GEMINI_MODEL=
+GEMINI_FALLBACK_MODEL=
 ```
 
 Frontend:
@@ -143,6 +145,7 @@ Production env notes:
 - Set `VITE_API_URL` to the deployed backend API base, for example `https://your-backend.onrender.com/api`.
 - Set `CLIENT_URLS` on the backend to the deployed frontend origin. Use comma-separated values for multiple origins.
 - Store `FIREBASE_PRIVATE_KEY` with escaped newlines (`\n`) if your host requires single-line env values.
+- The backend defaults to `gemini-3.1-flash-lite` for generation and falls back to `gemini-2.5-flash`. Override with `GEMINI_MODEL` and `GEMINI_FALLBACK_MODEL` if needed.
 
 ## Roadmap
 
