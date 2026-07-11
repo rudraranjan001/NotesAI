@@ -20,7 +20,7 @@ function App() {
   useEffect(() => {
     const timerId = window.setTimeout(() => {
       setIntroVisible(false);
-    }, 900);
+    }, 1000);
 
     return () => window.clearTimeout(timerId);
   }, []);
