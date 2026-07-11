@@ -1,3 +1,5 @@
+import { DotLottieReact } from "@lottiefiles/dotlottie-react";
+
 type AppLoaderProps = {
   message?: string;
 };
@@ -5,13 +7,12 @@ type AppLoaderProps = {
 function AppLoader({ message = "Preparing your study space" }: AppLoaderProps) {
   return (
     <main className="app-loader" aria-live="polite" aria-busy="true">
-      <div className="app-loader__orb" />
       <div className="app-loader__content">
-        <p className="app-loader__eyebrow">NotesAI</p>
-        <h1 className="app-loader__title">{message}</h1>
-        <div className="app-loader__bar" aria-hidden="true">
-          <span />
+        <div className="app-loader__animation" aria-hidden="true">
+          <DotLottieReact src="/animations/student.lottie" loop autoplay />
         </div>
+        <h1 className="app-loader__title">{message}</h1>
+        <p className="app-loader__subtitle">NotesAI is getting ready...</p>
       </div>
     </main>
   );
