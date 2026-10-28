@@ -1,49 +1,29 @@
-import MarkdownView from "./MarkdownView";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
-type MindMapViewProps = {
-  content: string;
-};
+type MarkdownViewProps = { content: string };
 
-const cleanLine = (line: string) =>
-  line.replace(/^[-*]\s*/, "").replace(/\*\*/g, "").trim();
+const MarkdownView = ({ content }: MarkdownViewProps) => (
+  <div className="space-y-4 p-5 text-sm leading-7 text-slate-700 sm:text-base">
+    <ReactMarkdown remarkPlugins={[remarkGfm]} components={{
+      h1: ({ children }) => <h1 className="text-2xl font-bold text-slate-950">{children}</h1>,
+      h2: ({ children }) => <h2 className="mt-5 text-xl font-bold text-slate-950">{children}</h2>,
+      h3: ({ children }) => <h3 className="mt-4 text-lg font-semibold text-slate-900">{children}</h3>,
+      p: ({ children }) => <p>{children}</p>,
+      ul: ({ children }) => <ul className="list-disc space-y-1 pl-6">{children}</ul>,
+      ol: ({ children }) => <ol className="list-decimal space-y-1 pl-6">{children}</ol>,
+      blockquote: ({ children }) => <blockquote className="border-l-4 border-teal-300 pl-4 text-slate-600">{children}</blockquote>,
+      table: ({ children }) => <table className="w-full min-w-max border-collapse text-left">{children}</table>,
+      th: ({ children }) => <th className="border-b border-slate-300 bg-slate-50 px-3 py-2 font-semibold text-slate-900">{children}</th>,
+      td: ({ children }) => <td className="border-b border-slate-200 px-3 py-2 align-top">{children}</td>,
+      pre: ({ children }) => <pre className="overflow-x-auto rounded-lg bg-slate-100 p-3 text-sm">{children}</pre>,
+      code: ({ children }) => <code className="rounded bg-slate-100 px-1 text-sm">{children}</code>,
+      a: ({ children, href }) => <a className="font-medium text-teal-700 underline" href={href}>{children}</a>,
+      hr: () => <hr className="border-slate-200" />,
+    }}>
+      {content}
+    </ReactMarkdown>
+  </div>
+);
 
-const MindMapView = ({ content }: MindMapViewProps) => {
-  const lines = content
-    .split("\n")
-    .map((line) => line.trim())
-    .filter((line) => line.startsWith("-") || line.startsWith("*"));
-
-  if (lines.length === 0) {
-    return <MarkdownView content={content} />;
-  }
-
-  const mainTopic = cleanLine(lines[0]);
-  const branches = lines.slice(1).map(cleanLine).filter(Boolean);
-
-  return (
-    <div className="space-y-5">
-      <div className="rounded-xl border border-teal-200 bg-teal-50 p-5 text-center">
-        <p className="text-xs font-bold uppercase tracking-wide text-teal-700">
-          Main Topic
-        </p>
-        <h2 className="mt-2 text-2xl font-bold text-slate-950">{mainTopic}</h2>
-      </div>
-
-      <div className="grid gap-3 sm:grid-cols-2">
-        {branches.map((branch, index) => (
-          <div
-            key={`${branch}-${index}`}
-            className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm"
-          >
-            <p className="text-xs font-bold uppercase tracking-wide text-slate-500">
-              Branch {index + 1}
-            </p>
-            <p className="mt-2 font-semibold text-slate-800">{branch}</p>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-};
-
-export default MindMapView;
+export default MarkdownView;

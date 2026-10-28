@@ -2,6 +2,7 @@ import { useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import { generateNotes } from "../services/generateApi";
 import { createNote } from "../services/notesApi";
+import { downloadNotesPdf } from "../services/exportPdf";
 import FlashcardView from "../component/FlashcardView";
 import MarkdownView from "../component/MarkdownView";
 import MermaidView from "../component/MermaidView";
@@ -33,13 +34,15 @@ function GeneratePage() {
   const [hasSaved, setHasSaved ] = useState(false);
   const [savedNoteId, setSavedNoteId] = useState("");
   const [copyMessage, setCopyMessage] = useState("");
+  const [pdfError, setPdfError] = useState("");
+  const [isExporting, setIsExporting] = useState(false);
   const savingRef = useRef(false);
   const trimmedTopic = topic.trim();
   const topicTooShort = trimmedTopic.length > 0 && trimmedTopic.length < 2;
   const topicTooLong = topic.length > 120;
   const canGenerate = trimmedTopic.length >= 2 && !topicTooLong && !isGenerating;
 
-  const handleGenerate = async () => {
+  const handleGenerate = async () => { 
   if (!trimmedTopic) {
     setError("Please enter a topic.");
     return;
@@ -62,6 +65,7 @@ function GeneratePage() {
     setSaveError("");
     setSavedNoteId("");
     setCopyMessage("");
+    setPdfError("");
     setHasSaved(false);
 
     const data = await generateNotes({ topic, format });
@@ -83,6 +87,7 @@ const handleClear = () => {
   setSaveError("");
   setSavedNoteId("");
   setCopyMessage("");
+  setPdfError("");
   setHasSaved(false);
 };
 
@@ -94,6 +99,21 @@ const handleCopy = async () => {
     setCopyMessage("Copied notes to clipboard.");
   } catch {
     setCopyMessage("Copy failed. Select the text and copy it manually.");
+  }
+};
+
+const handleExportPdf = async () => {
+  if (!result || isExporting) return;
+  setPdfError("");
+  try {
+    setIsExporting(true);
+    await downloadNotesPdf(result);
+  } catch (error) {
+    setPdfError(error instanceof Error && error.message === "There are no notes to export yet."
+      ? error.message
+      : "Could not create the PDF. Please try again.");
+  } finally {
+    setIsExporting(false);
   }
 };
 
@@ -197,6 +217,9 @@ const handleCopy = async () => {
               <button className="rounded-lg border border-slate-300 px-5 py-3 font-semibold text-slate-800 hover:bg-slate-100" onClick={handleCopy}>
                   Copy
               </button>
+              <button className="rounded-lg border border-slate-300 px-5 py-3 font-semibold text-slate-800 hover:bg-slate-100 disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-400" onClick={handleExportPdf} disabled={isExporting || !result.content.trim()}>
+                  {isExporting ? "Exporting..." : "Export PDF"}
+              </button>
               <button className="rounded-lg border border-slate-300 px-5 py-3 font-semibold text-slate-800 hover:bg-slate-100 disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-400" onClick={handleGenerate} disabled={!canGenerate}>
                   Regenerate
               </button>
@@ -231,6 +254,7 @@ const handleCopy = async () => {
             )}
             {copyMessage && <p className="mt-4 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-medium text-slate-700">{copyMessage}</p>}
             {saveError && <p className="mt-4 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm font-medium text-red-700">{saveError}</p>}
+            {pdfError && <p role="alert" className="mt-4 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm font-medium text-red-700">{pdfError}</p>}
         </section>
         )}
     </main>
